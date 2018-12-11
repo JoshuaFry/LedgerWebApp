@@ -1,0 +1,7 @@
+nav li{
+    display: inline;
+    list-style-type: none;
+}
+table, th, td {
+    border: 1px solid black;
+}

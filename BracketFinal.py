@@ -9,8 +9,8 @@ app.config['SECRET_KEY'] = "random string"
 db = SQLAlchemy(app)
 
 class User(UserMixin, db.Model):
-    id = db.Column('student_id', db.Integer, primary_key=True)
-    bracket = db.relationship('Bracket', backref='owner')
+    id = db.Column(db.Integer, primary_key=True)
+    brackets = db.relationship('Bracket', backref='user')
     name = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
@@ -19,9 +19,10 @@ class User(UserMixin, db.Model):
         self.password = password
 
 class Bracket(db.Model):
-    id = db.Column('student_id', db.Integer, primary_key=True)
-    owner = db.Column(db.Integer, db.ForeignKey('owner.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     size = db.Column(db.Integer)
+    table_data = db.Column(db.String(800))
 
 @app.route('/')
 def home():
@@ -31,8 +32,9 @@ def home():
 def bracket():
     return render_template("bracket.html")
 
-@app.route('/addUserToBracket')
-def add_user_to_bracket():
+@app.route('/addUserToBracket/{{name}}')
+def add_user_to_bracket(name):
+
     return render_template("bracket.html")
 
 @app.route('/Profile')
