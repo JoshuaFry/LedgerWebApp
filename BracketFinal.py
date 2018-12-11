@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, flash, url_for, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user,current_user, login_required
 
@@ -24,8 +24,8 @@ class Bracket(db.Model):
     size = db.Column(db.Integer)
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def home():
+    return render_template('home.html')
 
 
 if __name__ == '__main__':
