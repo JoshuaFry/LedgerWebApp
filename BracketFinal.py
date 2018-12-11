@@ -23,10 +23,10 @@ class Bracket(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey('owner.id'))
     size = db.Column(db.Integer)
 
-
 @app.route('/')
 def hello_world():
     return 'Hello World!'
+
 
 if __name__ == '__main__':
     app.run()
