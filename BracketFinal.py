@@ -1,7 +1,7 @@
 from flask import Flask, request, flash, url_for, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user,current_user, login_required
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
@@ -72,7 +72,7 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data, password=form.password.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -86,9 +86,11 @@ class User(UserMixin, db.Model):
     brackets = db.relationship('Bracket', backref='user')
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100),unique=True, nullable=False)
 
-    def __init__(self, name, password):
-        self.name = name
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
         self.password = password
 
     def set_password(self, password):
@@ -111,8 +113,10 @@ class Bracket(db.Model):
 def home():
     return render_template('home.html')
 
-@app.route('/Bracket')
-def bracket():
+@app.route('/Bracket/{{id}}')
+def bracket(id):
+
+
     return render_template("bracket.html")
 
 @app.route('/addUserToBracket/{{name}}')
@@ -123,7 +127,6 @@ def add_user_to_bracket(name):
 @app.route('/Profile')
 def profile():
     return render_template("profile.html")
-
 
 if __name__ == '__main__':
     app.run()
