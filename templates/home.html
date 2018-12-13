@@ -4,6 +4,10 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <body>
+<h1>Hi, {{current_user.username}}!</h1>
+{% for post in posts %}
+<div><p>{{post.author.username}} says: <b>{{post.body}}</b></p></div>
+{% endfor %}
 <h2>Home</h2>
 <p>Use this page to navigate from viewing and creating new entries into the Students database.</p>
 <br>
