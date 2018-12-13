@@ -10,6 +10,11 @@
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('bracket') }}">Create</a></li>
             <li><a href="{{ url_for('profile') }}">Read</a></li>
+            {% if current_user.is_anonymous %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% else %}
+            <li><a href="{{ url_for('logout')}}">Logout</a></li>
+            {% endif %}
         </ul>
     </nav>
 {% block content %}
