@@ -2,6 +2,16 @@
 
 {% block content %}
     <h1>Login</h1>
+    <script>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    alert("{{message}}");
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+
     <form action="{{url_for('submit_login')}}" method="post">
         <label for="name">Username</label>
         <br>

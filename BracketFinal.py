@@ -91,12 +91,6 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route('/Bracket/{{id}}')
-def bracket(id):
-
-    return render_template("bracket.html")
-
-
 @app.route('/addUserToBracket/{{name}}')
 def add_user_to_bracket(name):
     return render_template("bracket.html")
@@ -119,14 +113,15 @@ def submit_login():
     password = data['password']
     name = data['name']
     user = User.query.filter_by(username=name).first()
-    if user.password == password:
-        print("loging in")
-        login_user(user)
-        return render_template('profile.html')
-    else:
-        print("auth failed")
-        flash("Authentication Failed")
-        return render_template('login.html')
+    if user is not None:
+        if user.password == password:
+            print("Loging in")
+            login_user(user)
+            return render_template('profile.html')
+
+    print("auth failed")
+    flash("Authentication Failed")
+    return render_template('login.html')
 
 
 @app.route('/logout')
