@@ -6,16 +6,50 @@ from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-
+from random import randint
 app = Flask(__name__)
 
 login = LoginManager(app)
 login.init_app(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///UserBracket.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///UserInvoices.db'
 app.config['SECRET_KEY'] = "random string"
 
 db = SQLAlchemy(app)
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    invoices = db.relationship('Invoice', backref='user')
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100),unique=True, nullable=False)
+    balance = db.Column(db.Integer)
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
+        self.set_balance(randint(50, 10000))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password_hash(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def set_balance(self, balance):
+        self.balance = balance
+
+class Invoice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.Integer, db.ForeignKey('user.username'))
+    recipient = db.Column(db.String(100), unique=True, nullable=False)
+    amount = db.Column(db.Integer)
+
+    def __init__(self, sender, recipient, amount):
+        self.sender = sender
+        self.recipient = recipient
+        self.amount = amount
 
 
 class LoginForm(FlaskForm):
@@ -44,32 +78,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    brackets = db.relationship('Bracket', backref='user')
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100),unique=True, nullable=False)
-
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password_hash(self, password):
-        return check_password_hash(self.password_hash, password)
-
-
-class Bracket(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    size = db.Column(db.Integer)
-    table_data = db.Column(db.String(800))
-
-
 @login_required
 @app.route('/')
 def home():
@@ -86,14 +94,10 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        login_user(user)
         flash('Congratulations, you are now a registered user!')
-        return render_template('profile.html', id=user.id)
+        return redirect(url_for('profile'))
     return render_template('register.html', title='Register', form=form)
-
-
-@app.route('/addUserToBracket/{{name}}')
-def add_user_to_bracket(name):
-    return render_template("bracket.html")
 
 
 @login.user_loader
@@ -117,7 +121,7 @@ def submit_login():
         if user.password == password:
             print("Loging in")
             login_user(user)
-            return render_template('profile.html')
+            return redirect(url_for('profile'))
 
     print("auth failed")
     flash("Authentication Failed")
@@ -134,8 +138,63 @@ def logout():
 @app.route('/Profile')
 @login_required
 def profile():
-    return render_template("profile.html")
+    charges = Invoice.query.filter_by(sender=current_user.username).all()
+    bills = Invoice.query.filter_by(recipient=current_user.username).all()
+    balance = current_user.balance
+    return render_template("profile.html", charges=charges, bills=bills, balance=balance)
 
+
+@app.route('/invoice/<id>', methods=['GET', 'POST'])
+@login_required
+def invoice(id):
+    users= User.query.all()
+    if id == -99:
+        return render_template('invoice.html', update=False, users=users)
+    else:
+        invoice = Invoice.query.filter_by(id=id).first()
+        return render_template('invoice.html', update=True, invoice=invoice, users=users)
+
+
+@app.route('/update_invoice/<id>', methods=['GET', 'POST'])
+@login_required
+def update(id):
+    invoice= Invoice.query.filter_by(id=id).first()
+    data= request.form
+    invoice.recipient = data['recipient']
+    invoice.amount = data['amount']
+    db.session.commit()
+    return redirect(url_for('profile'))
+
+
+@app.route('/delete/<id>', methods=['GET', 'POST'])
+@login_required
+def delete(id):
+    invoice= Invoice.query.filter_by(id=id).first()
+    db.session.delete(invoice)
+    db.session.commit()
+    return redirect(url_for('profile'))
+
+
+@app.route('/create_invoice', methods=['GET', 'POST'])
+@login_required
+def create_invoice():
+    data = request.form
+    invoice = Invoice(current_user.username, data['recipient'], data['amount'])
+    db.session.add(invoice)
+    db.session.commit()
+    return redirect(url_for('profile'))
+
+
+@app.route('/pay/<id>')
+@login_required
+def pay(id):
+    invoice= Invoice.query.filter_by(id=id).first()
+    sender = User.query.filter_by(username=invoice.sender).first()
+    current_user.balance -= invoice.amount
+    sender.balance += invoice.amount
+    db.session.delete(invoice)
+    db.session.commit()
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     app.run()

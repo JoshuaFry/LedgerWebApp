@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<body>
+
+     {% if not update %}
+
+         <form action = "{{url_for('update', id = invoice.id)}}" method = "post">
+            <label for = "recipient">Recipient</label><br>
+            <select name = "recipient">
+            {% for user in users %}
+                <option value="{{ user.username }}">{{ user.username }}</option>
+            {% endfor %}
+            </select>
+            <br>
+             <label for = "amount">Amount Owed</label><br>
+             <input type = "number" name = "amount" value = "{{invoice.amount}}" />
+             <br>
+            <input type = "submit" value = "Submit" />
+         </form>
+
+     {% else %}
+
+        <form action = "{{url_for('create_invoice')}}" method = "post">
+            <label for = "recipient">Recipient</label><br>
+            <select name = "recipient">
+            {% for user in users %}
+                <option value="{{ user.username }}">{{ user.username }}</option>
+            {% endfor %}
+            </select>
+            <br>
+            <label for = "amount">Amount Owed</label><br>
+            <input type = "number" name = "amount" /><br>
+            <input type = "submit" value = "Submit" />
+        </form>
+
+     {% endif %}
+
+
+</body>
+{% endblock %}
+</html>

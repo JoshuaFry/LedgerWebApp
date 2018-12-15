@@ -1,7 +1,19 @@
 nav li{
-    display: inline;
+    display: inline-block;
     list-style-type: none;
+    border-bottom: ThreeDShadow;
 }
 table, th, td {
     border: 1px solid black;
+}
+
+tr.charge{
+    background-color: darkseagreen;
+}
+tr.bill{
+    background-color: palevioletred;
+}
+
+class.empty{
+    background-color: black;
 }
