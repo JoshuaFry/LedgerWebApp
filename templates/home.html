@@ -4,13 +4,16 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <body>
+{% if user %}
 <h1>Hi, {{current_user.username}}!</h1>
-{% for post in posts %}
-<div><p>{{post.author.username}} says: <b>{{post.body}}</b></p></div>
-{% endfor %}
+{% endif %}
+
+
 <h2>Home</h2>
-<p>Use this page to navigate from viewing and creating new entries into the Students database.</p>
+<p>Ledgers is a online resource where you can charge or make payments with other Ledgers Users.</p>
 <br>
+
+
 
 </body>
 {% endblock %}

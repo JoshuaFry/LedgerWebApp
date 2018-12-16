@@ -5,6 +5,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="../static/style.css">
 </head>
+<div class = "nav">
     <nav>
         <ul>
             <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -17,6 +18,7 @@
             {% endif %}
         </ul>
     </nav>
+</div>
 {% block content %}
 {% endblock %}
 </html>

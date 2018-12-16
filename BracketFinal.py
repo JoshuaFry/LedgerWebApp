@@ -81,8 +81,10 @@ class RegistrationForm(FlaskForm):
 @login_required
 @app.route('/')
 def home():
-    return render_template('home.html')
-
+    if current_user.is_authenticated:
+        return render_template('home.html', user=True)
+    else:
+        return render_template('home.html', user=False)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

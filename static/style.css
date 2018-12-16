@@ -1,19 +1,67 @@
-nav li{
+html, body {height:100%;}
+html {display:table; width:100%;}
+body {
+    display:table-cell;
+    text-align:center;
+    vertical-align:text-top;
+}
+div.nav {
+    width: 40%;
+    background-color: lightskyblue;
+    align-items: center;
+    text-align: center;
+    position:relative;
+    margin:0 auto;
+    clear:left;
+    height:auto;
+    z-index: 0;
+}
+div.form{
+    width: 20%;
+    background-color: lightskyblue;
+    align-items: center;
+    text-align: left;
+    position:relative;
+    margin:0 auto;
+    clear:left;
+    height:auto;
+    z-index: 0;
+    padding: 15px;
+}
+nav ul li{
+    vertical-align:text-top;
     display: inline-block;
     list-style-type: none;
-    border-bottom: ThreeDShadow;
+    font-size: 17px;
+}
+li{
+    text-align:center;
+    vertical-align:text-top;
+    margin: 15px;
+    color: green;
 }
 table, th, td {
+    margin:0 auto;
     border: 1px solid black;
+    text-align: center;
+    padding: 5px;
 }
 
+td,th{
+    width: 120px;
+}
 tr.charge{
     background-color: darkseagreen;
 }
 tr.bill{
     background-color: palevioletred;
 }
+th.new_invoice{
+    height: 20px;
+}
 
-class.empty{
+tr.empty{
     background-color: black;
+    margin-top: 5px;
+    margin-bottom: 15px;
 }

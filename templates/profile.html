@@ -5,14 +5,14 @@
 {% block content %}
 <body>
 
-<h1>${{ balance }}</h1>
-<h3>Personal Ledger</h3>
+<h1>Personal Ledger</h1>
+<h3>Balance ${{ balance }}</h3>
 
       <table>
          <thead>
             <tr>
-               <th>Name</th>
                <th>Recipient</th>
+               <th>Sender</th>
                <th>Amount</th>
             </tr>
          </thead>
@@ -22,20 +22,19 @@
                <tr class="charge">
                   <td>{{ charge.sender }}</td>
                   <td>{{ charge.recipient }}</td>
-                  <td>{{ charge.amount }}</td>
+                  <td>${{ charge.amount }}</td>
                    <td><a href="/invoice/{{charge.id}}">Update</a></td>
                    <td><a href="/delete/{{charge.id}}">Delete</a></td>
                </tr>
             {% endfor %}
-
-            <td><a href="{{ url_for('invoice', id = -99)}}">Add an Invoice</a></td>
-            <tr class="empty"></tr>
+            <th class="new_invoice"><a href="{{ url_for('invoice', id = -99)}}">Add an Invoice</a></th>
+            <tr class="empty"><td></td><td></td><td></td><td></td><td></td></tr>
 
          {% for charge in bills %}
                <tr class="bill">
                   <td>{{ charge.sender }}</td>
                   <td>{{ charge.recipient }}</td>
-                  <td>{{ charge.amount }}</td>
+                  <td>${{ charge.amount }}</td>
                    <td><a href="{{ url_for('pay', id = charge.id)}}">Pay</a></td>
                </tr>
             {% endfor %}
