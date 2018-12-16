@@ -149,8 +149,8 @@ def profile():
 @app.route('/invoice/<id>', methods=['GET', 'POST'])
 @login_required
 def invoice(id):
-    users= User.query.all()
-    if id == -99:
+    users = User.query.all()
+    if id == '-99':
         return render_template('invoice.html', update=False, users=users)
     else:
         invoice = Invoice.query.filter_by(id=id).first()
