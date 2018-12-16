@@ -143,7 +143,8 @@ def profile():
     charges = Invoice.query.filter_by(sender=current_user.username).all()
     bills = Invoice.query.filter_by(recipient=current_user.username).all()
     balance = current_user.balance
-    return render_template("profile.html", charges=charges, bills=bills, balance=balance)
+    name = current_user.username
+    return render_template("profile.html", charges=charges, bills=bills, balance=balance, name = name)
 
 
 @app.route('/invoice/<id>', methods=['GET', 'POST'])
