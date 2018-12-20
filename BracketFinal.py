@@ -188,6 +188,10 @@ def create_invoice():
     return redirect(url_for('profile'))
 
 
+@app.errorhandler(404)
+def error(error):
+    return render_template('404.html')
+
 @app.route('/pay/<id>')
 @login_required
 def pay(id):
