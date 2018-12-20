@@ -3,11 +3,25 @@
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
 {% block content %}
+
 <body>
-
 <h1>{{ name }}'s Ledger</h1>
-<h3>Balance ${{ balance }}</h3>
 
+<script>
+
+    var balances = {{ balance }};
+    var text = "Balance: ";
+    var neg = text.fontcolor("ff0000");
+    var pos = text.fontcolor("00ff00");
+
+    if(balances < 0){
+        alert("Your balance is negative");
+        document.write("<h3>"+neg+{{ balance }}+"</h3>");
+
+    }else{
+        document.write("<h3>"+pos+{{ balance }}+"</h3>");
+    }
+</script>
       <table>
          <thead>
             <tr>
